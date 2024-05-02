@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Count Logs</h1>
+    <ul>
+        {% for count in counts %}
+        <li>
+            {{ count.title }}: {% if count.completed %}Completed{% else %}Not Complete{% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,78 +1,25 @@
-
 {% extends "base.html" %}
 
 {% block title %}Home Page{% endblock %}
 
 {% block content %}
     <header>
-        <h1>Bensor</h1>
+        <h1>Dress Code</h1>
     </header>
     <div class="container">
         <div class="widget">
             <video autoplay="true" id="videoElement" style="transform: scaleX(-1);"></video>
             <br>
-            <button onclick="toggleCamera()">Turn {% if cameraStatus %}Off{% else %}On{% endif %}</button>
+            <button onclick="captureFrame()">Capture Frame</button>
         </div>
     </div>
 
     <style>
-        body {
-            font-family: Times New Roman, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-image: url('/static/background.jpg');
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .widget {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        video {
-            width: 100%;
-            max-width: 600px;
-            display: block;
-            margin: 0 auto;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            margin-top: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
+        /* Your existing CSS styles */
     </style>
 
     <script>
-        let cameraStatus = true;
         let stream;
-
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(function(s) {
                 stream = s;
@@ -83,28 +30,15 @@
                 console.error('Error accessing the webcam:', error);
             });
 
-        function toggleCamera() {
-            if (cameraStatus) {
-                stream.getTracks().forEach(track => track.stop());
-                cameraStatus = false;
-            } else {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(function(s) {
-                        stream = s;
-                        var videoElement = document.getElementById('videoElement');
-                        videoElement.srcObject = stream;
-                    })
-                    .catch(function(error) {
-                        console.error('Error accessing the webcam:', error);
-                    });
-                cameraStatus = true;
-            }
-            updateButtonText();
-        }
-
-        function updateButtonText() {
-            var button = document.querySelector('button');
-            button.textContent = 'Turn ' + (cameraStatus ? 'Off' : 'On');
+        function captureFrame() {
+            var videoElement = document.getElementById('videoElement');
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            var imageDataURL = canvas.toDataURL('image/png');
+            console.log(imageDataURL); // You can send this data to your backend for processing
         }
     </script>
 {% endblock %}
